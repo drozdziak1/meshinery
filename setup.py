@@ -1,6 +1,6 @@
-"""A setuptools based setup module for meshinery"""
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""A setuptools based setup module for meshinery"""
 
 from codecs import open
 from os import path
@@ -17,12 +17,11 @@ with open(path.join(here, 'HISTORY.rst'), encoding='utf-8') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
-    # TODO: put package requirements here
-    'click',
+    'pyroute2',
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'pytest-runner',
 ]
 
 setup(
@@ -36,10 +35,10 @@ setup(
     url='https://github.com/drozdziak1/meshinery',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     entry_points={
-        'console_scripts':[
-            'meshinery=meshinery.cli:cli',
-            ],
-        },
+        'console_scripts': [
+            'meshinery=meshinery.cli:main',
+        ],
+    },
     include_package_data=True,
     install_requires=requirements,
     license="MIT",
