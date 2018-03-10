@@ -15,24 +15,28 @@ layout_dict = {
             'n2',
         ],
         'neighbors_connected': [],
+        'ip': '1.0.0.1',
     },
     'n2': {
         'neighbors': [
             'n3',
         ],
         'neighbors_connected': [],
+        'ip': '1.0.0.2',
     },
     'n3': {
         'neighbors': [
             'n4',
         ],
         'neighbors_connected': [],
+        'ip': '1.0.0.3',
     },
     'n4': {
         'neighbors': [
             'n1',
         ],
         'neighbors_connected': [],
+        'ip': '1.0.0.4',
     }
 }
 
@@ -103,10 +107,21 @@ def main():
                 neigh_iface = '%s-%s' % (neigh_name, node_name)
 
                 if not args.dry_run:
+                    # Create a veth pair
                     ip.create(ifname=node_iface, kind='veth',
                               peer=neigh_iface).commit()
+
+                    # Assign node IP
+                    ip.interfaces[node_iface].add_ip(node['ip'], 32)
                     ip.interfaces[node_iface]['net_ns_fd'] = node_name
+                    ip.interfaces[node_iface].up()
+
+                    # Assign neighbor IP
+                    ip.interfaces[node_iface].add_ip(layout[neigh_name]['ip'],
+                                                     32)
                     ip.interfaces[neigh_iface]['net_ns_fd'] = neigh_name
+                    ip.interfaces[neigh_iface].up()
+
                     ip.commit()
 
                 if args.verbose:
@@ -116,8 +131,6 @@ def main():
                 layout[neigh_name]['neighbors_connected'].append(node_name)
 
     ip.release()
-
-    print('args.JSON = %s' % args.JSON)
 
 
 if __name__ == '__main__':
